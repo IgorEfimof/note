@@ -42,29 +42,55 @@
             background-color: #f9f9f9;
             border-radius: 5px;
         }
+        .switch-container {
+            display: flex;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .switch-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+        }
+        .switch-option.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .ratio-presets {
+            display: none;
+        }
+        .ratio-presets.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <h2>Калькулятор пропорций</h2>
+    
+    <div class="switch-container">
+        <div class="switch-option active" onclick="switchMode(0)">10:30:90</div>
+        <div class="switch-option" onclick="switchMode(1)">10:20:30:60:120</div>
+    </div>
     
     <div class="input-group">
         <label for="total">Итоговая сумма:</label>
         <input type="number" id="total" placeholder="Введите сумму (например, 185)" step="0.01">
     </div>
     
-    <div class="input-group">
-        <label for="ratio1">Пропорция 1:</label>
-        <input type="number" id="ratio1" value="10" step="1">
+    <div class="ratio-presets active" id="preset1">
+        <div class="input-group">
+            <label>Пропорции: 10 : 30 : 90</label>
+        </div>
     </div>
     
-    <div class="input-group">
-        <label for="ratio2">Пропорция 2:</label>
-        <input type="number" id="ratio2" value="30" step="1">
-    </div>
-    
-    <div class="input-group">
-        <label for="ratio3">Пропорция 3:</label>
-        <input type="number" id="ratio3" value="90" step="1">
+    <div class="ratio-presets" id="preset2">
+        <div class="input-group">
+            <label>Пропорции: 10 : 20 : 30 : 60 : 120</label>
+        </div>
     </div>
     
     <button onclick="calculate()">Рассчитать</button>
@@ -75,45 +101,67 @@
     </div>
     
     <script>
+        let currentMode = 0;
+        
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.switch-option').forEach((el, index) => {
+                el.classList.toggle('active', index === mode);
+            });
+            document.querySelectorAll('.ratio-presets').forEach((el, index) => {
+                el.classList.toggle('active', index === mode);
+            });
+        }
+        
         function calculate() {
             // Получаем значения из полей ввода
             const total = parseFloat(document.getElementById('total').value);
-            const ratio1 = parseFloat(document.getElementById('ratio1').value);
-            const ratio2 = parseFloat(document.getElementById('ratio2').value);
-            const ratio3 = parseFloat(document.getElementById('ratio3').value);
             
-            // Проверяем, что все поля заполнены
-            if (isNaN(total) || isNaN(ratio1) || isNaN(ratio2) || isNaN(ratio3)) {
-                alert("Пожалуйста, заполните все поля корректно!");
+            // Проверяем, что поле заполнено
+            if (isNaN(total)) {
+                alert("Пожалуйста, введите сумму!");
                 return;
             }
             
-            // Сумма пропорций
-            const sumRatios = ratio1 + ratio2 + ratio3;
+            let ratios, resultText;
             
-            // Коэффициент масштабирования
-            const k = total / sumRatios;
-            
-            // Рассчитываем значения
-            const value1 = ratio1 * k;
-            const value2 = ratio2 * k;
-            const value3 = ratio3 * k;
-            
-            // Округляем до 2 знаков после запятой
-            const rounded1 = Math.round(value1 * 100) / 100;
-            const rounded2 = Math.round(value2 * 100) / 100;
-            const rounded3 = Math.round(value3 * 100) / 100;
-            
-            // Формируем результат
-            const resultText = `
-                <strong>Пропорции:</strong> ${ratio1} : ${ratio2} : ${ratio3}<br>
-                <strong>Итоговая сумма:</strong> ${total}<br><br>
-                <strong>Результат:</strong><br>
-                • ${ratio1} → ${rounded1}<br>
-                • ${ratio2} → ${rounded2}<br>
-                • ${ratio3} → ${rounded3}<br><br>
-                <strong>Проверка:</strong> ${rounded1} + ${rounded2} + ${rounded3} = ${(rounded1 + rounded2 + rounded3).toFixed(2)}
-            `;
+            if (currentMode === 0) {
+                // Режим 10:30:90
+                ratios = [10, 30, 90];
+                const sumRatios = ratios.reduce((a, b) => a + b, 0);
+                const k = total / sumRatios;
+                
+                const values = ratios.map(ratio => Math.round(ratio * k * 100) / 100);
+                
+                resultText = `
+                    <strong>Пропорции:</strong> 10 : 30 : 90<br>
+                    <strong>Итоговая сумма:</strong> ${total}<br><br>
+                    <strong>Результат:</strong><br>
+                    • 10 → ${values[0]}<br>
+                    • 30 → ${values[1]}<br>
+                    • 90 → ${values[2]}<br><br>
+                    <strong>Проверка:</strong> ${values[0]} + ${values[1]} + ${values[2]} = ${(values[0] + values[1] + values[2]).toFixed(2)}
+                `;
+            } else {
+                // Режим 10:20:30:60:120
+                ratios = [10, 20, 30, 60, 120];
+                const sumRatios = ratios.reduce((a, b) => a + b, 0);
+                const k = total / sumRatios;
+                
+                const values = ratios.map(ratio => Math.round(ratio * k * 100) / 100);
+                
+                resultText = `
+                    <strong>Пропорции:</strong> 10 : 20 : 30 : 60 : 120<br>
+                    <strong>Итоговая сумма:</strong> ${total}<br><br>
+                    <strong>Результат:</strong><br>
+                    • 10 → ${values[0]}<br>
+                    • 20 → ${values[1]}<br>
+                    • 30 → ${values[2]}<br>
+                    • 60 → ${values[3]}<br>
+                    • 120 → ${values[4]}<br><br>
+                    <strong>Проверка:</strong> ${values[0]} + ${values[1]} + ${values[2]} + ${values[3]} + ${values[4]} = ${(values[0] + values[1] + values[2] + values[3] + values[4]).toFixed(2)}
+                `;
+            }
             
             // Выводим результат
             document.getElementById('resultText').innerHTML = resultText;
