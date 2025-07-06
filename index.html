@@ -229,6 +229,134 @@
             
             // Округляем до 2 знаков после запятой
             const rounded1 = Math.round(value1 * 100) / 100;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор пропорций (Dark Mode)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        h2 {
+            color: #bb86fc;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #bb86fc;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            color: #ffffff;
+            border-radius: 4px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #bb86fc;
+        }
+        button {
+            background-color: #bb86fc;
+            color: #000000;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #9a67ea;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #1e1e1e;
+            border-radius: 5px;
+            border-left: 4px solid #bb86fc;
+        }
+        #resultText strong {
+            color: #bb86fc;
+        }
+        #resultText {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h2>Калькулятор пропорций</h2>
+    
+    <div class="input-group">
+        <label for="total">Итоговая сумма:</label>
+        <input type="number" id="total" placeholder="Введите сумму (например, 185)" step="0.01">
+    </div>
+    
+    <div class="input-group">
+        <label for="ratio1">Пропорция 1:</label>
+        <input type="number" id="ratio1" value="10" step="1">
+    </div>
+    
+    <div class="input-group">
+        <label for="ratio2">Пропорция 2:</label>
+        <input type="number" id="ratio2" value="30" step="1">
+    </div>
+    
+    <div class="input-group">
+        <label for="ratio3">Пропорция 3:</label>
+        <input type="number" id="ratio3" value="90" step="1">
+    </div>
+    
+    <button onclick="calculate()">Рассчитать</button>
+    
+    <div id="result" class="result" style="display: none;">
+        <h3 style="color: #bb86fc; margin-top: 0;">Результат:</h3>
+        <p id="resultText"></p>
+    </div>
+    
+    <script>
+        function calculate() {
+            // Получаем значения из полей ввода
+            const total = parseFloat(document.getElementById('total').value);
+            const ratio1 = parseFloat(document.getElementById('ratio1').value);
+            const ratio2 = parseFloat(document.getElementById('ratio2').value);
+            const ratio3 = parseFloat(document.getElementById('ratio3').value);
+            
+            // Проверяем, что все поля заполнены
+            if (isNaN(total) || isNaN(ratio1) || isNaN(ratio2) || isNaN(ratio3)) {
+                alert("Пожалуйста, заполните все поля корректно!");
+                return;
+            }
+            
+            // Сумма пропорций
+            const sumRatios = ratio1 + ratio2 + ratio3;
+            
+            // Коэффициент масштабирования
+            const k = total / sumRatios;
+            
+            // Рассчитываем значения
+            const value1 = ratio1 * k;
+            const value2 = ratio2 * k;
+            const value3 = ratio3 * k;
+            
+            // Округляем до 2 знаков после запятой
+            const rounded1 = Math.round(value1 * 100) / 100;
             const rounded2 = Math.round(value2 * 100) / 100;
             const rounded3 = Math.round(value3 * 100) / 100;
             
